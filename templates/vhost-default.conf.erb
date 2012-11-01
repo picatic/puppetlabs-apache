@@ -17,8 +17,15 @@ NameVirtualHost <%= vhost_name %>:<%= port %>
   DocumentRoot <%= docroot %>
 <% if @ssl %>
   SSLEngine on
-  SSLCertificateFile <%= ssl_cert_file %>
-  SSLCertificateKeyFile <%= ssl_cert_key_file %>
+	<% if @ssl_cert_file %>
+  SSLCertificateFile <%= ssl_cert_file_path %>
+	<% end %>
+	<% if @ssl_cert_key_file %>
+  SSLCertificateKeyFile <%= ssl_cert_key_file_path %>
+	<% end %>
+	<% if @ssl_cert_ca_file %>
+	SSLCertificateChainFile <%= ssl_cert_ca_file_path %>
+	<% end %>
 <% end %>
   <Directory <%= docroot %>>
     Options <%= options %>

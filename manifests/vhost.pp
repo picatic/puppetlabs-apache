@@ -45,8 +45,9 @@ define apache::vhost(
     $serveradmin        = false,
     $configure_firewall = true,
     $ssl                = $apache::params::ssl,
-    $ssl_cert_file      = $apache::params::ssl_cert_file,
-    $ssl_cert_key_file  = $apache::params::ssl_cert_key_file,
+    $ssl_cert_file      = false,
+    $ssl_cert_key_file  = false,
+		$ssl_cert_ca_file		= false,
     $template           = $apache::params::template,
     $priority           = $apache::params::priority,
     $servername         = $apache::params::servername,
@@ -75,6 +76,17 @@ define apache::vhost(
 
   if $ssl == true {
     include apache::mod::ssl
+
+		apache::install_key { "${srvname}":
+			domain => $srvname,
+			ssl_cert_key_file => $ssl_cert_key_file,
+			ssl_cert_file => $ssl_cert_file,
+			ssl_cert_ca_file => $ssl_cert_ca_file
+		}
+
+		$ssl_cert_key_file_path = "${apache::params::ssl_path}/private/${srvname}.key"
+		$ssl_cert_file_path = "${apache::params::ssl_path}/certs/${srvname}.crt"
+		$ssl_cert_ca_file_path = "${apache::params::ssl_path}/certs/${srvname}.cabundle"
   }
 
   # Since the template will use auth, redirect to https requires mod_rewrite
